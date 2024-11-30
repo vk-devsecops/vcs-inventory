@@ -1,0 +1,71 @@
+services:
+  db:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SCHEMA: ${POSTGRES_SCHEMA}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app_network
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  pgadmin:
+    image: dpage/pgadmin4:8.13
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    depends_on:
+      - db
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./servers.json:/pgadmin4/servers.json
+    networks:
+      - app_network
+
+  app:
+    build: .
+    container_name: inventory
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_SCHEMA: ${POSTGRES_SCHEMA}
+      DRY_RUN: ${DRY_RUN}
+      DEBUG_ENABLED: ${DEBUG_ENABLED}
+      PROCESS_PROJECTS: ${PROCESS_PROJECTS}
+      PROCESS_GROUPS: ${PROCESS_GROUPS}
+      PROCESS_REGISTRIES: ${PROCESS_REGISTRIES}
+      PROCESS_USERS: ${PROCESS_USERS}
+      PROJECT_WORKERS_COUNT: ${PROJECT_WORKERS_COUNT}
+      GROUP_WORKERS_COUNT: ${GROUP_WORKERS_COUNT}
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    networks:
+      - app_network
+
+networks:
+  app_network:
+
+volumes:
+  pgdata:
+  pgadmin_data:

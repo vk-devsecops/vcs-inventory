@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "inventory",
+            "Group": "inventory",
+            "Port": 5432,
+            "Username": "postgres",
+            "Host": "postgres_db",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}

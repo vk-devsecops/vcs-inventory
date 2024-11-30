@@ -1,0 +1,12 @@
+---
+corp-gitlab:
+  - URL: "https://gitlab.mycompany.com"
+  - TYPE: "gitlab"
+  - USERNAME: "user"
+  - PAT: "glptt-12345aa2a123a12aa45f67fff12344321ff123f"
+
+corp-bitbucket:
+  - URL: "https://bitbucket.mycompany.com"
+  - TYPE: "bitbucket"
+  - USERNAME: "user"
+  - PAT: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
