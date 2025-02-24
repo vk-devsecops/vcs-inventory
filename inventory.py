@@ -62,7 +62,8 @@ def fast_inventory() -> None:
                 for instance in instances:
                     if instance.type == 'gitlab':
                         logger.info(f"Start processing ({instance.url})...")
-                        instance_processor = GitLabParser(instance, instance.mnemonic['PAT'])
+                        instance_processor = GitLabParser(vcs_instance=instance,
+                                                          token=vcs_instances[instance.mnemonic]['PAT'])
 
                         instance_processor.process_new_projects(instance.id)
                         instance_processor.process_new_groups(instance.id)
